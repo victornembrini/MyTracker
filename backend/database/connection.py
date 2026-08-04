@@ -1,6 +1,7 @@
 import sqlite3
 import threading
 from contextlib import contextmanager
+import os
 
 
 class DatabaseSingleton:
@@ -15,7 +16,8 @@ class DatabaseSingleton:
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(DatabaseSingleton, cls).__new__(cls)
-                cls._instance.db_path = "muscu.db"
+                dossier_actuel = os.path.dirname(os.path.abspath(__file__))
+                cls._instance.db_path = os.path.join(dossier_actuel, "muscu.db")
         return cls._instance
 
     @contextmanager
