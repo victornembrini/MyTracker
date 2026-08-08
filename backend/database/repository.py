@@ -38,3 +38,31 @@ def create_user(user_data):
         conn.commit()
 
         return cursor.lastrowid
+
+
+def create_seance_planifiee(seance_data: schemas.SeancePlanifieeCreate):
+    with db.get_connection() as conn:
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO Seances_Planifiees (split_id, nom)
+            VALUES (?, ?)
+            """,
+            (seance_data.split_id, seance_data.nom),
+        )
+
+        nouvelle_seance_id = cursor.lastrowid
+
+        for exo in seance_data.exercices:
+            cursor.execute(
+                """
+            INSERT INTO Programmes_Exercices (seance_plan_id, exercice_id, objectif_series)
+            VALUES (?, ?, ?)
+            """,
+                (nouvelle_seance_id, exo.exercice_id, exo.objectif_series),
+            )
+
+        conn.commit()
+
+        return nouvelle_seance_id

@@ -41,3 +41,18 @@ def inscrire_utilisateur(user: schemas.UserCreate):
 
     # On renvoie un reçu au client
     return {"message": "Utilisateur créé avec succès !", "user_id": nouvel_id}
+
+
+# (Assure-toi que repository et schemas sont bien importés en haut du fichier)
+
+
+@app.post("/seances-planifiees")
+def creer_seance_planifiee(seance: schemas.SeancePlanifieeCreate):
+    # L'ouvrier fait le travail et nous renvoie l'ID généré
+    nouvel_id = repository.create_seance_planifiee(seance)
+
+    # Le serveur (FastAPI) répond au client (le téléphone)
+    return {
+        "message": f"La séance '{seance.nom}' a été créée avec succès !",
+        "seance_plan_id": nouvel_id,
+    }

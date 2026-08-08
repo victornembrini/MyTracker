@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import date
 from typing import Literal
+from typing import List
 
 
 # --- UTILISATEUR ---
@@ -37,12 +38,8 @@ class ExerciceResponse(ExerciceBase):
 
 # --- PLANIFICATION : SÉANCE ---
 class SeancePlanifieeBase(BaseModel):
-    nom: str = Field(..., max_length=10)
+    nom: str = Field(..., max_length=20)
     split_id: int
-
-
-class SeancePlanifieeCreate(SeancePlanifieeBase):
-    pass
 
 
 class SeancePlanifieeResponse(SeancePlanifieeBase):
@@ -67,3 +64,14 @@ class SetRealiseResponse(SetRealiseBase):
     set_id: int
     workout_id: int
     model_config = {"from_attributes": True}
+
+
+# --- PLANIFICATION : PROGRAMME EXERCICE (La table de liaison) ---
+class ProgrammeExerciceCreate(BaseModel):
+    exercice_id: int
+    objectif_series: int = Field(..., gt=0, description="Nombre de séries visées")
+
+
+class SeancePlanifieeCreate(SeancePlanifieeBase):
+    # C'est ICI la magie : on imbrique une liste d'un autre modèle Pydantic
+    exercices: list[ProgrammeExerciceCreate]
